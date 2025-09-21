@@ -15,7 +15,6 @@ import {
 } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// --- Helper functions ---
 const isToday = (date) => {
   const d = new Date(date);
   const now = new Date();
@@ -40,13 +39,11 @@ const isThisMonth = (date) => {
   return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
 };
 
-// --- Main App ---
 export default function App() {
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [screen, setScreen] = useState("home"); // home | add | search | projects
+  const [screen, setScreen] = useState("home");
 
-  // form state for Add
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [tags, setTags] = useState("");
@@ -54,17 +51,13 @@ export default function App() {
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [selectedProject, setSelectedProject] = useState(null);
 
-  // edit dialog state
   const [editingTask, setEditingTask] = useState(null);
 
-  // search/filter
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("all"); // all | today | week | month
+  const [filter, setFilter] = useState("all");
 
-  // project form
   const [projectName, setProjectName] = useState("");
 
-  // load data
   useEffect(() => {
     (async () => {
       const storedTasks = await AsyncStorage.getItem("tasks");
@@ -74,7 +67,6 @@ export default function App() {
     })();
   }, []);
 
-  // save helpers
   const saveTasks = async (newTasks) => {
     setTasks(newTasks);
     await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
@@ -85,7 +77,6 @@ export default function App() {
     await AsyncStorage.setItem("projects", JSON.stringify(newProjects));
   };
 
-  // CRUD
   const addTask = () => {
     if (!title.trim()) return;
     const newTask = {
@@ -130,7 +121,6 @@ export default function App() {
     setSelectedProject(null);
   };
 
-  // filtering
   const applyFilter = (list) => {
     if (filter === "today") return list.filter((t) => isToday(t.date));
     if (filter === "week") return list.filter((t) => isThisWeek(t.date));
@@ -148,7 +138,6 @@ export default function App() {
     )
   );
 
-  // --- UI screens ---
   const renderHome = () => (
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
@@ -190,7 +179,7 @@ export default function App() {
         onPress={() => setScreen("add")}
       />
 
-      {/* Edit dialog inside Home */}
+      {}
       <Portal>
         <Dialog visible={!!editingTask} onDismiss={() => setEditingTask(null)}>
           <Dialog.Title>Edit Task</Dialog.Title>
@@ -250,7 +239,7 @@ export default function App() {
     <SafeAreaView style={{ padding: 16 }}>
       <TextInput label="Title" value={title} onChangeText={setTitle} style={{ marginBottom: 10 }} />
       <TextInput label="Description" value={desc} onChangeText={setDesc} style={{ marginBottom: 10 }} />
-      <TextInput label="Tags (comma separated)" value={tags} onChangeText={setTags} style={{ marginBottom: 10 }} />
+      <TextInput label="Tags (, separated)" value={tags} onChangeText={setTags} style={{ marginBottom: 10 }} />
       <TextInput label="Priority" value={priority} onChangeText={setPriority} style={{ marginBottom: 10 }} />
       <TextInput label="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} style={{ marginBottom: 10 }} />
       <TextInput
@@ -322,3 +311,4 @@ export default function App() {
     </PaperProvider>
   );
 }
+
